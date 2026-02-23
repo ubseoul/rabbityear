@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADÉ - THE VILLAGE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #00ff41;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .poster {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: flicker 8s infinite;
+  }
+
+  #matrix-rain {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    opacity: 0.3;
+  }
+
+  .vignette {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center 55%, transparent 20%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.92) 100%);
+    z-index: 2;
+  }
+
+  .scanlines {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.015) 2px, rgba(0,255,65,0.015) 4px);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .scan-beam {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0,255,65,0.08) 20%, rgba(0,255,65,0.15) 50%, rgba(0,255,65,0.08) 80%, transparent 100%);
+    z-index: 4;
+    animation: scanMove 6s linear infinite;
+  }
+
+  @keyframes scanMove { 0% { top: -2px; } 100% { top: 100%; } }
+
+  .character-zone {
+    position: absolute;
+    z-index: 3;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+  }
+
+  .avatar-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-img {
+    height: 55vh;
+    max-height: 500px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 30px rgba(0,255,65,0.25)) drop-shadow(0 0 60px rgba(0,255,65,0.1));
+    position: relative;
+    z-index: 2;
+    animation: avatarGlitch 7s infinite;
+  }
+
+  .avatar-glow {
+    position: absolute;
+    width: 400px; height: 500px;
+    background: radial-gradient(ellipse, rgba(0,255,65,0.1) 0%, rgba(0,255,65,0.03) 40%, transparent 70%);
+    z-index: 1;
+  }
+
+  .avatar-outline {
+    position: absolute;
+    width: 320px; height: 460px;
+    border: 1px solid rgba(0,255,65,0.08);
+    border-radius: 4px;
+    z-index: 0;
+    animation: outlinePulse 4s ease-in-out infinite;
+  }
+
+  @keyframes outlinePulse {
+    0%, 100% { border-color: rgba(0,255,65,0.05); transform: scale(1); }
+    50% { border-color: rgba(0,255,65,0.15); transform: scale(1.03); }
+  }
+
+  @keyframes avatarGlitch {
+    0%, 95%, 100% { transform: translate(0,0); filter: drop-shadow(0 0 30px rgba(0,255,65,0.25)) drop-shadow(0 0 60px rgba(0,255,65,0.1)); }
+    96% { transform: translate(-3px,1px); filter: drop-shadow(3px 0 0 rgba(255,0,0,0.15)) drop-shadow(-3px 0 0 rgba(0,100,255,0.15)) drop-shadow(0 0 30px rgba(0,255,65,0.25)); }
+    97% { transform: translate(2px,-1px); filter: drop-shadow(0 0 30px rgba(0,255,65,0.25)); }
+    98% { transform: translate(-1px,2px); filter: drop-shadow(2px 0 0 rgba(255,0,0,0.1)) drop-shadow(-2px 0 0 rgba(0,100,255,0.1)) drop-shadow(0 0 30px rgba(0,255,65,0.25)); }
+  }
+
+  .content {
+    position: absolute;
+    z-index: 5;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 35px 30px 30px;
+    pointer-events: none;
+  }
+
+  .top-section {
+    text-align: center;
+    animation: glitchIn 1.5s ease-out forwards;
+  }
+
+  .subtitle-top {
+    font-size: 11px;
+    letter-spacing: 12px;
+    color: #00ff41;
+    opacity: 0.5;
+    margin-bottom: 6px;
+    text-indent: 12px;
+  }
+
+  .main-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 80px;
+    font-weight: 900;
+    letter-spacing: 18px;
+    color: #00ff41;
+    text-shadow: 0 0 20px rgba(0,255,65,0.8), 0 0 40px rgba(0,255,65,0.4), 0 0 80px rgba(0,255,65,0.2), 0 0 120px rgba(0,255,65,0.1);
+    position: relative;
+    line-height: 1;
+  }
+
+  .main-title::after {
+    content: 'ADÉ';
+    position: absolute;
+    top: 3px; left: 3px;
+    color: rgba(255,0,0,0.12);
+    z-index: -1;
+  }
+
+  .main-title::before {
+    content: 'ADÉ';
+    position: absolute;
+    top: -2px; left: -3px;
+    color: rgba(0,100,255,0.1);
+    z-index: -1;
+  }
+
+  .title-line {
+    width: 180px; height: 1px;
+    background: linear-gradient(90deg, transparent, #00ff41, transparent);
+    margin: 10px auto;
+  }
+
+  .subtitle-village {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    letter-spacing: 20px;
+    color: #00ff41;
+    opacity: 0.45;
+    text-indent: 20px;
+  }
+
+  .stats-left {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stat { display: flex; flex-direction: column; gap: 3px; }
+
+  .stat-label {
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: rgba(0,255,65,0.4);
+    text-transform: uppercase;
+  }
+
+  .stat-bar-bg {
+    width: 90px; height: 3px;
+    background: rgba(0,255,65,0.1);
+  }
+
+  .stat-bar {
+    height: 100%;
+    background: #00ff41;
+    box-shadow: 0 0 8px rgba(0,255,65,0.5);
+  }
+
+  .codes-right {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: right;
+  }
+
+  .code-line {
+    font-size: 8.5px;
+    color: rgba(0,255,65,0.22);
+    letter-spacing: 1.5px;
+  }
+
+  .code-line.active {
+    color: rgba(0,255,65,0.65);
+    text-shadow: 0 0 10px rgba(0,255,65,0.3);
+  }
+
+  .code-line.latest {
+    color: rgba(0,255,65,0.9);
+    text-shadow: 0 0 15px rgba(0,255,65,0.5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .code-divider {
+    width: 100%; height: 1px;
+    background: rgba(0,255,65,0.1);
+    margin: 4px 0;
+  }
+
+  .code-stat {
+    font-size: 9px;
+    color: rgba(0,255,65,0.45);
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  .bottom-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tagline {
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: rgba(0,255,65,0.35);
+    text-transform: uppercase;
+    text-indent: 5px;
+  }
+
+  .quote-box {
+    border: 1px solid rgba(0,255,65,0.12);
+    padding: 10px 24px;
+    max-width: 520px;
+    background: rgba(0,0,0,0.4);
+  }
+
+  .quote-text {
+    font-size: 10.5px;
+    line-height: 1.8;
+    color: rgba(0,255,65,0.5);
+    letter-spacing: 1.5px;
+  }
+
+  .quote-text span {
+    color: #00ff41;
+    text-shadow: 0 0 10px rgba(0,255,65,0.4);
+  }
+
+  .bottom-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 8px;
+    letter-spacing: 8px;
+    color: rgba(0,255,65,0.2);
+    text-indent: 8px;
+  }
+
+  @keyframes glitchIn {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateX(-3px); }
+    20% { transform: translateX(3px); }
+    30% { transform: translateX(-1px); }
+    40% { transform: translateX(1px); }
+    50%, 100% { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes flicker {
+    0%, 97%, 100% { opacity: 1; }
+    98% { opacity: 0.85; }
+    99% { opacity: 0.9; }
+  }
+
+  .corner {
+    position: absolute;
+    width: 25px; height: 25px;
+    z-index: 6;
+  }
+
+  .corner-tl { top: 15px; left: 15px; border-top: 1px solid rgba(0,255,65,0.25); border-left: 1px solid rgba(0,255,65,0.25); }
+  .corner-tr { top: 15px; right: 15px; border-top: 1px solid rgba(0,255,65,0.25); border-right: 1px solid rgba(0,255,65,0.25); }
+  .corner-bl { bottom: 15px; left: 15px; border-bottom: 1px solid rgba(0,255,65,0.25); border-left: 1px solid rgba(0,255,65,0.25); }
+  .corner-br { bottom: 15px; right: 15px; border-bottom: 1px solid rgba(0,255,65,0.25); border-right: 1px solid rgba(0,255,65,0.25); }
+</style>
+</head>
+<body>
+<div class="poster">
+  <canvas id="matrix-rain"></canvas>
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="scan-beam"></div>
+
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="character-zone">
+    <div class="avatar-container">
+      <div class="avatar-glow"></div>
+      <div class="avatar-outline"></div>
+      <img src="ade_avatar.png" alt="Adé" class="avatar-img" />
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="top-section">
+      <div class="subtitle-top">WAKE UP</div>
+      <div class="main-title">ADÉ</div>
+      <div class="title-line"></div>
+      <div class="subtitle-village">THE VILLAGE</div>
+    </div>
+
+    <div class="stats-left">
+      <div class="stat">
+        <div class="stat-label">Faith</div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: 85%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Patience</div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: 92%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Craft</div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: 78%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Honesty</div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: 100%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Survival</div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width: 40%"></div></div>
+      </div>
+    </div>
+
+    <div class="codes-right">
+      <div class="code-line">DREAM://001 — DIAMOND</div>
+      <div class="code-line">DREAM://008 — LION.JUDAH</div>
+      <div class="code-line">DREAM://029 — LOFI.BIRTH</div>
+      <div class="code-line">DREAM://043 — ANCIENT.FOREST</div>
+      <div class="code-line active">DREAM://053 — MARINATED</div>
+      <div class="code-line">DREAM://064 — HOUSE.EAST</div>
+      <div class="code-line active">DREAM://067 — JESUS.CAFE</div>
+      <div class="code-line">DREAM://113 — GOLD.MINE</div>
+      <div class="code-line latest">DREAM://114 — MATRIX.ESCAPE</div>
+      <div class="code-divider"></div>
+      <div class="code-stat">113 DREAMS</div>
+      <div class="code-stat">0 DESKS</div>
+    </div>
+
+    <div class="bottom-section">
+      <div class="tagline">THE RABBIT BUILT THE VILLAGE</div>
+      <div class="quote-box">
+        <div class="quote-text">
+          <span>THEY</span> HAVE BEEN INCREASING YOUR CAPACITY WITH PATIENCE<br>
+          FOR WHAT <span>THEY</span> PLAN TO POUR INTO YOU
+        </div>
+      </div>
+      <div class="bottom-tag">EHORO VILLAGE — 2025</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('matrix-rain');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ADEOLUWAJOHNEHORO'.split('');
+  const fontSize = 13;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(0).map(() => Math.floor(Math.random() * -50));
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.055)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      const brightness = Math.random();
+      if (brightness > 0.95) ctx.fillStyle = 'rgba(0,255,65,0.9)';
+      else if (brightness > 0.8) ctx.fillStyle = 'rgba(0,255,65,0.4)';
+      else ctx.fillStyle = 'rgba(0,255,65,0.15)';
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    requestAnimationFrame(drawMatrix);
+  }
+
+  drawMatrix();
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+</script>
+</body>
+</html>
